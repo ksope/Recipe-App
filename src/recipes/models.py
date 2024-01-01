@@ -8,6 +8,7 @@ class Recipe(models.Model):
     ingredients=models.CharField(max_length=255)
     cooking_time=models.PositiveIntegerField(help_text= 'in minutes')
     pic = models.ImageField(upload_to='recipes', default='no_picture.jpg')
+
     
 
     def __str__(self): 

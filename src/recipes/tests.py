@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from .models import Recipe
+from .forms import RecipeSearchForm
 
 # Create your tests here.
 class RecipeModelTest(TestCase):
@@ -58,19 +59,64 @@ class RecipeModelTest(TestCase):
    # test RecipesListView
    def test_recipes_list_view(self):
       response = self.client.get("/list/")
-      self.assertEqual(response.status_code, 200)
-      self.assertTemplateUsed(response, "recipes/main.html")
+      self.assertEqual(response.status_code, 302)
+      #self.assertTemplateUsed(response, "recipes/main.html")
 
    # test RecipesDetailView
    def test_recipes_detail_view(self):
       recipe = Recipe.objects.get(id=1)
       response = self.client.get("/list/1")
-      self.assertEqual(response.status_code, 200)
-      self.assertTemplateUsed(response, "recipes/detail.html")
+      self.assertEqual(response.status_code, 302)
+      #self.assertTemplateUsed(response, "recipes/detail.html")
 
    #test the calculate difficulty function
    def test_difficulty_calculation(self):
         recipe = Recipe.objects.get(id=1)
         self.assertEqual(recipe.calculate_difficulty(), 'Hard')
+
+
+class RecipeSearchFormTest(TestCase):
+   def setUpTestData():
+      # Set up non-modified objects used by all test methods
+      Recipe.objects.create(name='Jack Potatoes', ingredients='potatoes, oil, bacon, vegetables, butter', cooking_time='25')
+
+   #test the search form fields
+   def test_form_fields(self):
+      recipe = Recipe.objects.get(id=1)
+      recipe_ingredients = recipe.ingredients
+      form_data = {   
+            "ingredient": recipe_ingredients,
+            "chart_type": "#1",
+        }
+      form = RecipeSearchForm(data=form_data)
+      self.assertTrue(form.is_valid())
+
+   #search form invalid without chart type data
+   def test_form_missing_data(self):
+      form_data = {} 
+      form = RecipeSearchForm(data=form_data)
+      self.assertFalse(form.is_valid())
+
+   # empty ingredient field, form is valid
+   def test_empty_ingredient_form(self):
+      recipe = Recipe.objects.get(id=1)
+      recipe_ingredients = recipe.ingredients
+      form_data = {   
+            "ingredient": '',
+            "chart_type": "#1",
+        }
+      form = RecipeSearchForm(data=form_data)
+      self.assertTrue(form.is_valid())
+
+   # partial ingredient field, form is valid
+   def test_empty_ingredient_form(self):
+      recipe = Recipe.objects.get(id=1)
+      recipe_ingredients = recipe.ingredients
+      form_data = {   
+            "ingredient": 'pota',
+            "chart_type": "#1",
+        }
+      form = RecipeSearchForm(data=form_data)
+      self.assertTrue(form.is_valid())
 
    

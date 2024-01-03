@@ -23,6 +23,9 @@ Note: Run these commands in the terminal from the desired root directory
 Clone the repo
 git clone https://github.com/ksope/Recipe-App.git
 
+Create virtual environment
+mkvirtualenv a2-ve-recipeapp, then enter virtual env using workon a2-ve-recipeapp
+
 Install the requirements
 pip install -r requirements.txt
 
